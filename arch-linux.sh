@@ -36,5 +36,5 @@ timedatectl set-ntp true
 # set polish keyboard layout
 loadkeys pl
 
-parted /dev/sda --script mklabel gpt mkpart primary fat32 0 512MiB set boot name "EFP with systemd-boot"
-parted /dev/sda --script mklabel gpt mkpart primary 512MiB -- -1s  set boot lvm "Arch LVM on LUKS"
+parted /dev/sda --script mklabel gpt mkpart primary fat32 0 512MiB set boot on name "EFP with systemd-boot"
+parted /dev/sda --script mklabel gpt mkpart primary 512MiB 100% set lvm "Arch LVM on LUKS"
