@@ -20,8 +20,11 @@ then
   echo -e "Script is designed to work only with UEFI system" 1>&2
   exit 1
 else
-  echo -e "UEFI system \e[0;32;47m [OK] \e[0m 0;32m \t"
+  echo -e "UEFI system \e[0;32;47m [OK] \e[0m \t"
 fi
+
+# connection with Internet is required 
+# wifi-menu
 
 # enable network time synchronization
 timedatectl set-ntp true
@@ -33,4 +36,4 @@ timedatectl set-ntp true
 # set polish keyboard layout
 loadkeys pl
 
-gdisk /dev/sda
+parted /dev/sda --script mklabel gpt mkpart primary fat32 0 512MiB set boot name "EFP with systemd-boot"
