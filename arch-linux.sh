@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # http://kvz.io/blog/2013/11/21/bash-best-practices/
+# sh -c "$(curl -fsSL https://raw.githubusercontent.com/Archetylator/scripts/master/arch-linux.sh)"
 
 # make your script exit when a command fails 
 set -o errexit
