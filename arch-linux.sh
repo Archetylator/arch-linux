@@ -37,3 +37,4 @@ timedatectl set-ntp true
 loadkeys pl
 
 parted /dev/sda --script mklabel gpt mkpart primary fat32 0 512MiB set boot name "EFP with systemd-boot"
+parted /dev/sda --script mklabel gpt mkpart primary 512MiB -- -1s  set boot lvm "Arch LVM on LUKS"
