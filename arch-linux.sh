@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # http://kvz.io/blog/2013/11/21/bash-best-practices/
-# sh -c "$(curl --location --silent https://raw.githubusercontent.com/Archetylator/scripts/master/arch-linux.sh)"
+# sh -c "$(curl --location --silent goo.gl/XsZBK6)"
 
 # make your script exit when a command fails 
 set -o errexit
