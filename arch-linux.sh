@@ -13,14 +13,14 @@ set -o pipefail
 set -o nounset
 
 # trace what gets executed, usefull when debugging
-set -o xtrace 
+# set -o xtrace 
 
 if [ `find /sys/firmware/efi/efivars -prune -empty -type d`]
 then
-  echo -e "UEFI system \e[0;32;47m [OK] \e[0m 0;32m \t"
-else
   echo -e "Script is designed to work only with UEFI system" 1>&2
   exit 1
+else
+  echo -e "UEFI system \e[0;32;47m [OK] \e[0m 0;32m \t"
 fi
 
 # enable network time synchronization
