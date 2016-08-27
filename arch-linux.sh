@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # http://kvz.io/blog/2013/11/21/bash-best-practices/
-# sh -c "$(curl -fsSL https://raw.githubusercontent.com/Archetylator/scripts/master/arch-linux.sh)"
+# sh -c "$(curl --location https://raw.githubusercontent.com/Archetylator/scripts/master/arch-linux.sh)"
 
 # make your script exit when a command fails 
 set -o errexit
@@ -13,8 +13,23 @@ set -o pipefail
 set -o nounset
 
 # trace what gets executed, usefull when debugging
-# set -o xtrace 
+set -o xtrace 
 
+if [ $(ls --almost-all /sys/firmware/efi/efivars) ]
+then
+  echo -e "UEFI system \e[0;32;47m [OK] \e[0m 0;32m \t"
+else
+  error_exit "Script is designed to work only with UEFI system"
+fi
+
+# enable network time synchronization
 timedatectl set-ntp true
+
+# timezones are not handle by NTP which always returns UTC time
+# handling the time zone is a role of computers local OS
+# http://serverfault.com/questions/194402/does-ntp-daemon-set-the-host-timezone
+
+# set polish keyboard layout
+loadkeys pl
 
 gdisk /dev/sda
