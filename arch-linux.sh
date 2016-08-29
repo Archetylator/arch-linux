@@ -36,7 +36,8 @@ timedatectl set-ntp true
 # set polish keyboard layout
 loadkeys pl
 
-read -e -p "Enter device (eg. /dev/sda):" -i "/dev/sda" DEVICE
+echo "Enter device (eg. /dev/sda):"
+read DEVICE
 
 parted $DEVICE --script mkpart primary fat32 0% 512MiB
 parted $DEVICE --script mklabel gpt 
