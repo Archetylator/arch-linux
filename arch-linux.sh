@@ -101,65 +101,65 @@ task "Setting ext4 on 'root' virtual volume"
 mkfs.ext4 /dev/mapper/arch-root
 ok
 
-task 
+task "Setting ext4 on 'home' virtual volume"
 mkfs.ext4 /dev/mapper/arch-home
-ok "Set ext4 on 'home' virtual volume"
+ok 
 
-task 
+task "Setting swap on 'swap' virtual volume"
 mkswap /dev/mapper/arch-swap
-ok "Set swap on 'swap' virtual volume"
+ok
 
-task 
+task "Mounting 'arch-root' under '/mnt'"
 mount /dev/mapper/arch-root /mnt
-ok "Mounted 'arch-root' under '/mnt'"
+ok
 
-task 
+task "Mounting 'arch-swap'"
 swapon /dev/mapper/arch-swap
-ok "Mounted 'arch-swap'"
+ok
 
-task 
+task "Mounting 'arch-home' under '/mnt/home'"
 mkdir /mnt/home
 mount /dev/mapper/arch-home /mnt/home
-ok "Mounted 'arch-home' under '/mnt/home'"
+ok
 
-task 
+task "Mounting ESP under '/mnt/boot'"
 mkdir /mnt/boot
 mkdir /mnt/boot/EFI
 mount $PARTITION1 /mnt/boot
-ok "Mounted ESP under '/mnt/boot'"
+ok
 
-task 
+task "Installing base system"
 pacstrap /mnt base base-devel vim git efibootmgr dialog wpa_supplicant
-ok "Installed base system"
+ok
 
-task 
+task "Generating fstab file"
 genfstab -pU /mnt >> /mnt/etc/fstab
-ok "Generated fstab file"
+ok
 
-arch-chroot /mnt /bin/bash
-ok "Chroot into new system"
-
-ln -s /usr/share/zoneinfo/Europe/Sofia /etc/localtime
-hwclock --systohc --utc
-ok "Set local time zone"
-
-echo LANG=en_US.UTF-8 >> /etc/locale.conf
-echo LANGUAGE=en_US >> /etc/locale.conf
-echo LC_ALL=C >> /etc/locale.conf
-ok "Set system language"
-
-echo zalman > /etc/hostname
-ok "Set host name"
-
-passwd
-ok "Set root password"
-
-sed -i 's/\bMODULES="\b/&ext4 /' /etc/mkinitcpio.conf
-sed -i 's/\bHOOKS="\b/&encrypt lvm2 /' /etc/mkinitcpio.conf
-ok "Added 'encrypt lvm2' to MODULES AND 'ext4' to HOOKS in '/etc/mkinitcpio.conf'"
-
-mkinitcpio -p linux
-ok "Create a new initial RAM disk"
-
-bootctl --path=$PARTITION1 install
-ok "Installed systemd-boot"
+cat << EOF | arch-chroot /mnt
+task "Setting local time zone" /
+ln -s /usr/share/zoneinfo/Europe/Sofia /etc/localtime /
+hwclock --systohc --utc /
+ok /
+task "Setting system language" /
+echo LANG=en_US.UTF-8 >> /etc/locale.conf /
+echo LANGUAGE=en_US >> /etc/locale.conf /
+echo LC_ALL=C >> /etc/locale.conf /
+ok /
+task "Setting host name" /
+echo zalman > /etc/hostname /
+ok /
+task "Setting root password" /
+passwd /
+ok /
+task "Adding 'encrypt lvm2' to MODULES AND 'ext4' to HOOKS in '/etc/mkinitcpio.conf'" /
+sed -i 's/\bMODULES="\b/&ext4 /' /etc/mkinitcpio.conf /
+sed -i 's/\bHOOKS="\b/&encrypt lvm2 /' /etc/mkinitcpio.conf /
+ok /
+task "Creating a new initial RAM disk" /
+mkinitcpio -p linux /
+ok /
+task "Installing systemd-boot" /
+bootctl --path=$PARTITION1 install /
+ok /
+EOF
