@@ -16,7 +16,7 @@ set -o nounset
 # set -o xtrace
 
 function ok {
-  echo -e $1" \e[0;32;47m [OK] \e[0m \t"
+  echo -e " \e[0;32;47m [OK] \e[0m \t"
 }
 
 function task {
