@@ -19,6 +19,10 @@ function ok {
   echo -e $1" \e[0;32;47m [OK] \e[0m \t"
 }
 
+function task {
+  echo -n $1
+}
+
 if [ `find /sys/firmware/efi/efivars -prune -empty -type d`]
 then
   echo -e "Script is designed to work only with UEFI system" 1>&2
@@ -43,76 +47,92 @@ ok "Set polish keybourd layout"
 read -e -p "Enter device (eg. /dev/sda):" -i "/dev/sda" DEVICE
 
 # set GPT for device
+task "Setting GPT"
 parted $DEVICE --script mklabel gpt
-ok "Set GPT"
+ok
 
-parted $DEVICE --script mkpart primary fat32 0% 512MiB
+task "Creating 'ESP with systemd-boot' partition with boot flag" 
+parted $DEVICE --script mkpart ESP fat32 0% 512MiB
 parted $DEVICE --script set 1 boot on 
-parted $DEVICE --script name 1 'EFP with systemd-boot'
-ok "Created 'EFP with systemd-boot' partition with boot flag"
+parted $DEVICE --script name 1 'ESP with systemd-boot'
+ok
 
+task "Creating 'LVM on LUKS' partition"
 parted $DEVICE --script mkpart primary 512MiB 100% 
 parted $DEVICE --script set 2 LVM on 
 parted $DEVICE --script name 2 'Arch LVM on LUKS'
-ok "Created 'LVM on LUKS' partition"
+ok 
 
 PARTITION1=$DEVICE"1"
 PARTITION2=$DEVICE"2"
 
-mkfs.vfat -F32 $PARTITION1
-ok "Set fat32 on EFP partition"
-
+task "Encrypting 'LVM on LUKS' partition"
 #read -e -p "Enter password for LUKS:" PASSWORD
 cryptsetup --cipher aes-xts-plain64 --use-random luksFormat $PARTITION2
-ok "Encrypted 'LVM on LUKS' partition"
+ok
 
+task "Opening LUKS on 'LVM on LUKS' partition and mapping as 'luks'"
 cryptsetup luksOpen $PARTITION2 luks
-ok "Opened LUKS on 'LVM on LUKS' partition and mapped as 'luks'"
+ok
 
+task "Creating physical volume on 'luks'"
 pvcreate /dev/mapper/luks
-ok "Created physical volume on 'luks'"
+ok 
 
+task "Creating volume group named 'swap' on 'luks'"
 vgcreate arch /dev/mapper/luks
-ok "Created volume group named 'swap' on 'luks'"
+ok
 
 read -e -p "Enter size for swap partition:" -i "8G" SWAPSIZE
+task "Creating virtual volume named 'swap' in 'arch' group"
 lvcreate --size $SWAPSIZE arch --name swap
-ok "Created virtual volume named 'swap' in 'arch' group"
+ok
 
 read -e -p "Enter size for home partition:" -i "50G" HOMESIZE
+task "Creating virtual volume named 'home' in 'arch' group"
 lvcreate --size $HOMESIZE arch --name home
-ok "Created virtual volume named 'home' in 'arch' group"
+ok 
 
+task "Creating virtual volume named 'root' in 'arch' group"
 lvcreate -l +100%FREE arch --name root
-ok "Created virtual volume named 'root' in 'arch' group"
+ok 
 
+task "Setting ext4 on 'root' virtual volume"
 mkfs.ext4 /dev/mapper/arch-root
-ok "Set ext4 on 'root' virtual volume"
+ok
 
+task 
 mkfs.ext4 /dev/mapper/arch-home
 ok "Set ext4 on 'home' virtual volume"
 
+task 
 mkswap /dev/mapper/arch-swap
 ok "Set swap on 'swap' virtual volume"
 
+task 
 mount /dev/mapper/arch-root /mnt
 ok "Mounted 'arch-root' under '/mnt'"
 
+task 
 swapon /dev/mapper/arch-swap
 ok "Mounted 'arch-swap'"
 
+task 
 mkdir /mnt/home
 mount /dev/mapper/arch-home /mnt/home
 ok "Mounted 'arch-home' under '/mnt/home'"
 
+task 
 mkdir /mnt/boot
 mkdir /mnt/boot/EFI
 mount $PARTITION1 /mnt/boot
 ok "Mounted ESP under '/mnt/boot'"
 
+task 
 pacstrap /mnt base base-devel vim git efibootmgr dialog wpa_supplicant
 ok "Installed base system"
 
+task 
 genfstab -pU /mnt >> /mnt/etc/fstab
 ok "Generated fstab file"
 
