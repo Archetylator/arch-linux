@@ -62,7 +62,8 @@ PARTITION2=$DEVICE"2"
 mkfs.vfat -F32 $PARTITION1
 ok "Set fat32 on EFP partition"
 
-echo YES | cryptsetup --cipher aes-xts-plain64 --verify-passphrase --use-random luksFormat $PARTITION2
+read -e -p "Enter password for LUKS:" PASSWORD
+(echo YES; echo $PASSWORD; echo $PASSWORD) | cryptsetup --cipher aes-xts-plain64 --verify-passphrase --use-random luksFormat $PARTITION2
 ok "Encrypted 'LVM on LUKS' partition"
 
 cryptsetup luksOpen $PARTITION2 luks
