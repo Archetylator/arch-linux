@@ -28,21 +28,24 @@ then
   echo -e "Script is designed to work only with UEFI system" 1>&2
   exit 1
 else
-  ok "UEFI system"
+  task "UEFI system"
+  ok
 fi
 
 # connection with Internet is required 
 # wifi-menu
 
+task "Network time synchronization"
 timedatectl set-ntp true
-ok "Network time synchronization"
+ok
 
 # timezones are not handle by NTP which always returns UTC time
 # handling the time zone is a role of computers local OS
 # http://serverfault.com/questions/194402/does-ntp-daemon-set-the-host-timezone
 
+task "Setting polish keybourd layout"
 loadkeys pl
-ok "Set polish keybourd layout"
+ok
 
 read -e -p "Enter device (eg. /dev/sda):" -i "/dev/sda" DEVICE
 
@@ -96,6 +99,10 @@ ok
 task "Creating virtual volume named 'root' in 'arch' group"
 lvcreate -l +100%FREE arch --name root
 ok 
+
+task "Setting fat32 on ESP partition"
+mkfs.vfat -F32 $PARTITION1 
+ok
 
 task "Setting ext4 on 'root' virtual volume"
 mkfs.ext4 /dev/mapper/arch-root
