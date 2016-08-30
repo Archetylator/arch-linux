@@ -62,7 +62,7 @@ PARTITION2=$DEVICE"2"
 mkfs.vfat -F32 $PARTITION1
 ok "Set fat32 on EFP partition"
 
-cryptsetup --cipher aes-xts-plain64 --verify-passphrase --use-random luksFormat $PARTITION2
+echo YES | cryptsetup --cipher aes-xts-plain64 --verify-passphrase --use-random luksFormat $PARTITION2
 ok "Encrypted 'LVM on LUKS' partition"
 
 cryptsetup luksOpen $PARTITION2 luks
@@ -71,7 +71,7 @@ ok "Opened LUKS on 'LVM on LUKS' partition and mapped as 'luks'"
 pvcreate /dev/mapper/luks
 ok "Created physical volume on 'luks'"
 
-vgcreate arch /dev/mapper/lvm
+vgcreate arch /dev/mapper/luks
 ok "Created volume group named 'swap' on 'luks'"
 
 read -e -p "Enter size for swap partition:" -i "8G" SWAPSIZE
