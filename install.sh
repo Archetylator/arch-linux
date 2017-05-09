@@ -181,8 +181,8 @@ $CHROOT passwd --quiet
 result 
 
 task "Adding 'encrypt lvm2' to MODULES AND 'ext4' to HOOKS in '/etc/mkinitcpio.conf'" 
-sed -i 's/\bMODULES="\b/&ext4 /' $MOUNTPATH/etc/mkinitcpio.conf && \
-sed -i 's/\bHOOKS="\b/&encrypt lvm2 /' $MOUNTPATH/etc/mkinitcpio.conf 
+sed -i 's/^MODULES=.*/MODULES="ext4"/' $MOUNTPATH/etc/mkinitcpio.conf && \
+sed -i 's/^HOOKS=.*/HOOKS="base udev autodetect modconf keyboard block encrypt lvm2 filesystems fsck"/' $MOUNTPATH/etc/mkinitcpio.conf 
 result
 
 task "Creating a new initial RAM disk"
