@@ -199,7 +199,7 @@ $CHROOT bootctl install
 result
 
 task "Creating boot loader entry"
-cat << EOF > $CHROOT/boot/loader/entries/arch.conf
+cat << EOF > $MOUNTPATH/boot/loader/entries/arch.conf
 title Arch Linux
 linux /vmlinuz-linux
 initrd /initramfs-linux.img
@@ -208,7 +208,7 @@ EOF
 result
 
 task "Configuring boot loader"
-cat << EOF > $CHROOT/boot/loader/loader.conf
+cat << EOF > $MOUNTPATH/boot/loader/loader.conf
 timeout 3
 default arch
 editor 0
