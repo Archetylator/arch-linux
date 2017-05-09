@@ -86,8 +86,10 @@ parted $DEVICE --script name 2 'LVMonLUKS'
 PARTITION1=$DEVICE"1"
 PARTITION2=$DEVICE"2"
 
+read -e -p "Enter encryption password:" EPASS
+
 task "Encrypting 'LVM on LUKS' partition"
-cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 --use-random luksFormat $PARTITION2
+echo $EPASS | cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 --use-random luksFormat $PARTITION2
 result
 
 task "Opening LUKS on 'LVM on LUKS' partition and mapping as 'luks'"
