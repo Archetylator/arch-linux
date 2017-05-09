@@ -182,7 +182,7 @@ read -e -s -p "Enter root password:" RPASS
 echo -e
 
 task "Setting root password" 
-$CHROOT echo -e "$RPASS\n$RPASS" | passwd --quiet
+$CHROOT echo -e "$RPASS\n$RPASS" | passwd --quiet &> /dev/null
 result 
 
 task "Adding 'encrypt lvm2' to MODULES AND 'ext4' to HOOKS in '/etc/mkinitcpio.conf'" 
