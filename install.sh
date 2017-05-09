@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # http://kvz.io/blog/2013/11/21/bash-best-practices/
-# sh -c "$(curl --location --silent goo.gl/XsZBK6)"
+# sh -c "$(curl --location --silent https://goo.gl/ptUyx8)"
 
 # make your script exit when a command fails 
 set -o errexit
