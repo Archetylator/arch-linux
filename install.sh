@@ -36,13 +36,7 @@ function confirm {
   esac
 }
 
-verbose=
-
-case "$1" in
--v|--v|--ve|--ver|--verb|--verbo|--verbos|--verbose)
-    verbose=1
-    shift ;;
-esac
+verbose=0
 
 if [ "$verbose" = 1 ]; then
     exec 4>&2 3>&1
