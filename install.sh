@@ -82,11 +82,12 @@ task "Creating 'LVM on LUKS' partition"
 parted $DEVICE --script mkpart primary 512MiB 100% && \
 parted $DEVICE --script set 2 LVM on && \
 parted $DEVICE --script name 2 'LVMonLUKS'
+result 
 
 PARTITION1=$DEVICE"1"
 PARTITION2=$DEVICE"2"
 
-read -e -p "Enter encryption password:" EPASS
+read -e -s -p "Enter encryption password:" EPASS
 
 task "Encrypting 'LVM on LUKS' partition"
 echo $EPASS | cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 --use-random luksFormat $PARTITION2 -d -
