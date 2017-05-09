@@ -4,10 +4,10 @@
 # sh -c "$(curl --location --silent https://goo.gl/ptUyx8)"
 
 # make your script exit when a command fails 
-set -o errexit
+# set -o errexit
 
 # exit when your script tries to use undeclared variables 
-set -o nounset
+# set -o nounset
 
 # trace what gets executed, usefull when debugging
 # set -o xtrace
@@ -35,14 +35,6 @@ function confirm {
         ;;
   esac
 }
-
-verbose=0
-
-if [[ "$verbose" = 1 ]]; then
-    exec 4>&2 3>&1
-else
-    exec 4>/dev/null 3>/dev/null
-fi
 
 MOUNTPATH="/mnt"
 MOUNTHOMEPATH="$MOUNTPATH/home"
@@ -160,7 +152,7 @@ mount $PARTITION1 $MOUNTBOOTPATH
 result
 
 task "Installing base system"
-pacstrap $MOUNTPATH base base-devel efibootmgr
+pacstrap $MOUNTPATH base base-devel efibootmgr &> /dev/null
 result
 
 task "Generating fstab file"
@@ -182,7 +174,7 @@ echo arch > $MOUNTPATH/etc/hostname
 result 
 
 task "Setting root password" 
-$CHROOT passwd
+$CHROOT passwd --quiet
 result 
 
 task "Adding 'encrypt lvm2' to MODULES AND 'ext4' to HOOKS in '/etc/mkinitcpio.conf'" 
@@ -191,11 +183,11 @@ sed -i 's/\bHOOKS="\b/&encrypt lvm2 /' $MOUNTPATH/etc/mkinitcpio.conf
 result
 
 task "Creating a new initial RAM disk"
-$CHROOT mkinitcpio -p linux  
+$CHROOT mkinitcpio -p linux &> /dev/null
 result 
 
 task "Installing systemd-boot" 
-$CHROOT bootctl install 
+$CHROOT bootctl install &> /dev/null
 result
 
 task "Creating boot loader entry"
