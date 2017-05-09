@@ -89,6 +89,8 @@ PARTITION2=$DEVICE"2"
 
 read -e -s -p "Enter encryption password:" EPASS
 
+echo -e
+
 task "Encrypting 'LVM on LUKS' partition"
 echo $EPASS | cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 --use-random luksFormat $PARTITION2 -d -
 result
@@ -177,6 +179,7 @@ echo arch > $MOUNTPATH/etc/hostname
 result 
 
 task "Setting root password" 
+echo -e
 $CHROOT passwd --quiet
 result 
 
@@ -207,6 +210,18 @@ cat << EOF > $MOUNTPATH/boot/loader/loader.conf
 timeout 3
 default arch
 editor 0
+EOF
+
+cat << EOF > $MOUNTPATH/etc/pacman.d/hooks/systemd-boot.hook
+[Trigger]
+Type = Package
+Operation = Upgrade
+Target = systemd
+
+[Action]
+Description = Updating systemd-boot...
+When = PostTransaction
+Exec = /usr/bin/bootctl update
 EOF
 result
 
