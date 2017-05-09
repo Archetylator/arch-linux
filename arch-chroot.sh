@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # http://kvz.io/blog/2013/11/21/bash-best-practices/
-# sh -c "$(curl --location --silent goo.gl/XsZBK6)"
+# sh -c "$(curl --location --silent goo.gl/DFqadT)"
 
 # make your script exit when a command fails 
 set -o errexit
@@ -12,7 +12,7 @@ set -o nounset
 # trace what gets executed, usefull when debugging
 # set -o xtrace
 
-function ok {
+function ok {
   echo -e " \e[0;32;47m [OK] \e[0m \t"
 }
 
@@ -20,8 +20,22 @@ function task {
   echo -n $1
 }
 
+function confirm {
+  read -r -p "${1:-Are you sure? [y/N]} " response
+  case "$response" in
+    [yY][eE][sS]|[yY]) 
+        true
+        ;;
+    *)
+        false
+        ;;
+  esac
+}
+
+CHROOT="arch-chroot /mnt"
+
 task "Set hardware clock time in UTC"
-hwclock --systohc --utc
+$CHROOT hwclock --systohc --utc
 ok 
 
 task "Setting system language" 
@@ -31,7 +45,7 @@ echo LC_ALL=C >> /etc/locale.conf
 ok 
 
 task "Setting host name" 
-echo zalman > /etc/hostname 
+echo zalman > /mnt/etc/hostname 
 ok 
 
 task "Setting root password" 
@@ -49,5 +63,20 @@ ok
 
 task "Installing systemd-boot" 
 bootctl install 
+ok
+
+taks "Configuring boot loader"
+cat << EOF > /boot/loader/entries/arch.conf
+title Arch Linux
+linux /vmlinuz-linux
+initrd /initramfs-linux.img
+options cryptdevice=PARTLABEL=LVMonLUKS:cryptolvm root=/dev/mapper/arch-root rw
+EOF
+
+cat << EOF > /boot/loader/loader.conf
+timeout 3
+default arch
+editor 0
+EOF
 ok
 
