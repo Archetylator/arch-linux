@@ -92,11 +92,11 @@ read -e -s -p "Enter encryption password:" EPASS
 echo -e
 
 task "Encrypting 'LVM on LUKS' partition"
-echo $EPASS | cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 --use-random luksFormat $PARTITION2 -d -
+echo -e $EPASS | cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 --use-random luksFormat $PARTITION2 -d -
 result
 
 task "Opening LUKS on 'LVM on LUKS' partition and mapping as 'luks'"
-echo $EPASS | cryptsetup luksOpen $PARTITION2 luks -d -
+echo -e $EPASS | cryptsetup luksOpen $PARTITION2 luks -d -
 result
 
 task "Creating physical volume on 'luks'"
@@ -213,6 +213,8 @@ timeout 3
 default arch
 editor 0
 EOF
+
+mkdir --parents $MOUNTPATH/etc/pacman.d/hooks
 
 cat << EOF > $MOUNTPATH/etc/pacman.d/hooks/systemd-boot.hook
 [Trigger]
