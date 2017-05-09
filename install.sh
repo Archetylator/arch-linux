@@ -178,9 +178,11 @@ task "Setting host name"
 echo arch > $MOUNTPATH/etc/hostname 
 result 
 
-task "Setting root password" 
+read -e -s -p "Enter root password:" RPASS
 echo -e
-$CHROOT passwd --quiet
+
+task "Setting root password" 
+$CHROOT echo -e "$RPASS\n$RPASS" | passwd --quiet
 result 
 
 task "Adding 'encrypt lvm2' to MODULES AND 'ext4' to HOOKS in '/etc/mkinitcpio.conf'" 
