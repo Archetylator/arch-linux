@@ -38,7 +38,7 @@ function confirm {
 
 verbose=0
 
-if [ "$verbose" = 1 ]; then
+if [[ "$verbose" = 1 ]]; then
     exec 4>&2 3>&1
 else
     exec 4>/dev/null 3>/dev/null
