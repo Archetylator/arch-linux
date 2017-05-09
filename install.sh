@@ -207,5 +207,5 @@ editor 0
 EOF
 result
 
-confirm "Unmount and reboot" && umount -R /mnt && reboot
+confirm "Unmount and reboot [y/N]:" && umount -R /mnt && reboot
 
