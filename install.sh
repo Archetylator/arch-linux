@@ -89,49 +89,49 @@ PARTITION2=$DEVICE"2"
 read -e -p "Enter encryption password:" EPASS
 
 task "Encrypting 'LVM on LUKS' partition"
-echo $EPASS | cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 --use-random luksFormat $PARTITION2
+echo $EPASS | cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 --use-random luksFormat $PARTITION2 -d -
 result
 
 task "Opening LUKS on 'LVM on LUKS' partition and mapping as 'luks'"
-cryptsetup luksOpen $PARTITION2 luks
+echo $EPASS | cryptsetup luksOpen $PARTITION2 luks -d -
 result
 
 task "Creating physical volume on 'luks'"
-pvcreate /dev/mapper/luks
+pvcreate /dev/mapper/luks &> /dev/null 
 result 
 
 task "Creating volume group named 'arch' on 'luks'"
-vgcreate arch /dev/mapper/luks
+vgcreate arch /dev/mapper/luks &> /dev/null 
 result
 
 read -e -p "Enter size for swap partition:" -i "8G" SWAPSIZE
 task "Creating virtual volume named 'swap' in 'arch' group"
-lvcreate --size $SWAPSIZE arch --name swap
+lvcreate --size $SWAPSIZE arch --name swap &> /dev/null 
 result
 
 read -e -p "Enter size for home partition:" -i "50G" HOMESIZE
 task "Creating virtual volume named 'home' in 'arch' group"
-lvcreate --size $HOMESIZE arch --name home
+lvcreate --size $HOMESIZE arch --name home &> /dev/null 
 result 
 
 task "Creating virtual volume named 'root' in 'arch' group"
-lvcreate -l +100%FREE arch --name root
+lvcreate -l +100%FREE arch --name root &> /dev/null 
 result 
 
 task "Setting fat32 on ESP partition"
-mkfs.vfat -F32 $PARTITION1 
+mkfs.vfat -F32 $PARTITION1 &> /dev/null 
 result
 
 task "Setting ext4 on 'root' virtual volume"
-mkfs.ext4 /dev/mapper/arch-root
+mkfs.ext4 /dev/mapper/arch-root &> /dev/null 
 result
 
 task "Setting ext4 on 'home' virtual volume"
-mkfs.ext4 /dev/mapper/arch-home
+mkfs.ext4 /dev/mapper/arch-home &> /dev/null
 result 
 
 task "Setting swap on 'swap' virtual volume"
-mkswap /dev/mapper/arch-swap
+mkswap /dev/mapper/arch-swap &> /dev/null
 result
 
 task "Mounting 'arch-root' under '/mnt'"
