@@ -87,16 +87,16 @@ result
 PARTITION1=$DEVICE"1"
 PARTITION2=$DEVICE"2"
 
-read -e -s -p "Enter encryption password:" EPASS
+read -s -p "Enter encryption password:" EPASS
 
 echo -e
 
 task "Encrypting 'LVM on LUKS' partition"
-echo -e $EPASS | cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 --use-random luksFormat $PARTITION2 -d -
+echo $EPASS | cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 --use-random luksFormat $PARTITION2
 result
 
 task "Opening LUKS on 'LVM on LUKS' partition and mapping as 'luks'"
-echo -e $EPASS | cryptsetup luksOpen $PARTITION2 luks -d -
+echo $EPASS | cryptsetup luksOpen $PARTITION2 luks
 result
 
 task "Creating physical volume on 'luks'"
@@ -178,7 +178,7 @@ task "Setting host name"
 echo arch > $MOUNTPATH/etc/hostname 
 result 
 
-read -e -s -p "Enter root password:" RPASS
+read -s -p "Enter root password:" RPASS
 echo -e
 
 task "Setting root password" 
