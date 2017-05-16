@@ -53,8 +53,11 @@ fi
 # connection with Internet is required 
 # wifi-menu
 
+read -e -p "Enter time zone (eg. Canada/Eastern):" -i "Europe/Sofia" TIMEZONE
+
 task "Network time synchronization"
 timedatectl set-ntp true
+timedatectl set-timezone $TIMEZONE
 result
 
 # timezones are not handle by NTP which always returns UTC time
