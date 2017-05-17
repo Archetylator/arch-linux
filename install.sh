@@ -174,7 +174,7 @@ result
 task "Setting system language" 
 echo LANG=en_US.UTF-8 >> $MOUNTPATH/etc/locale.conf && \
 echo LANGUAGE=en_US >> $MOUNTPATH/etc/locale.conf && \
-sed -i "/#en_US.UTF-8 UTF-8/ s/# *//" $MOUNTPATH/etc/locale.conf && \
+sed -i "/#en_US.UTF-8 UTF-8/ s/# *//" $MOUNTPATH/etc/locale.gen && \
 $CHROOT locale-gen &> /dev/null
 result 
 
@@ -196,6 +196,17 @@ $CHROOT sh -c "echo 'root:$RPASS' | chpasswd"
 result 
 
 unset RPASS
+
+task "Time and localization"
+$CHROOT ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime && \
+$CHROOT hwclock --systohc
+result
+
+task "Keyboard layout"
+cat << EOF > $MOUNTPATH/etc/vconsole.conf
+KEYMAP=$KEYMAP
+EOF
+result
 
 task "Adding 'encrypt lvm2' to MODULES AND 'ext4' to HOOKS in '/etc/mkinitcpio.conf'" 
 sed -i 's/^MODULES=.*/MODULES="ext4"/' $MOUNTPATH/etc/mkinitcpio.conf && \
