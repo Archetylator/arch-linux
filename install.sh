@@ -50,23 +50,22 @@ else
   result
 fi
 
-# connection with Internet is required 
-# wifi-menu
+read -e -p "Enter keyboard layout (eg. uk):" -i "pl" KEYMAP
+
+task "Setting keybourd layout"
+localectl set-keymap --no-convert $KEYMAP
+result
 
 read -e -p "Enter time zone (eg. Canada/Eastern):" -i "Europe/Sofia" TIMEZONE
 
 task "Network time synchronization"
-timedatectl set-ntp true
+timedatectl set-ntp true && \
 timedatectl set-timezone $TIMEZONE
 result
 
 # timezones are not handle by NTP which always returns UTC time
 # handling the time zone is a role of computers local OS
 # http://serverfault.com/questions/194402/does-ntp-daemon-set-the-host-timezone
-
-task "Setting polish keybourd layout"
-loadkeys pl
-result
 
 read -e -p "Enter device (eg. /dev/sda):" -i "/dev/sda" DEVICE
 
@@ -101,6 +100,8 @@ result
 task "Opening LUKS on 'LVM on LUKS' partition and mapping as 'luks'"
 echo $EPASS | cryptsetup luksOpen $PARTITION2 luks
 result
+
+unset EPASS
 
 task "Creating physical volume on 'luks'"
 pvcreate /dev/mapper/luks &> /dev/null 
@@ -155,12 +156,11 @@ result
 
 task "Mounting ESP under '/mnt/boot'"
 mkdir $MOUNTBOOTPATH && \
-mkdir $MOUNTBOOTPATH/EFI && \
 mount $PARTITION1 $MOUNTBOOTPATH
 result
 
 task "Installing base system"
-pacstrap $MOUNTPATH base base-devel efibootmgr &> /dev/null
+pacstrap $MOUNTPATH base &> /dev/null
 result
 
 task "Generating fstab file"
@@ -174,19 +174,32 @@ result
 task "Setting system language" 
 echo LANG=en_US.UTF-8 >> $MOUNTPATH/etc/locale.conf && \
 echo LANGUAGE=en_US >> $MOUNTPATH/etc/locale.conf && \
-echo LC_ALL=C >> $MOUNTPATH/etc/locale.conf 
+sed -i "/#en_US.UTF-8 UTF-8/ s/# *//" $MOUNTPATH/etc/locale.conf && \
+$CHROOT locale-gen &> /dev/null
 result 
 
+HOSTNAME="zalman"
+
 task "Setting host name" 
-echo arch > $MOUNTPATH/etc/hostname 
+echo $HOSTNAME > $MOUNTPATH/etc/hostname 
 result 
+
+task "Updating hosts file"
+echo "127.0.1.1 $HOSTNAME.localdomain $HOSTNAME" >> $MOUNTPATH/etc/hosts
+result
 
 read -s -p "Enter root password:" RPASS
 echo -e
 
 task "Setting root password" 
-$CHROOT echo -e "$RPASS\n$RPASS" | passwd --quiet &> /dev/null
+$CHROOT /mnt sh -c "echo 'root:$RPASS' | chpasswd"
 result 
+
+unset RPASS
+
+task "Upgrading packages"
+$CHROOT pacman -Syu
+result
 
 task "Adding 'encrypt lvm2' to MODULES AND 'ext4' to HOOKS in '/etc/mkinitcpio.conf'" 
 sed -i 's/^MODULES=.*/MODULES="ext4"/' $MOUNTPATH/etc/mkinitcpio.conf && \
