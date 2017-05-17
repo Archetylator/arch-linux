@@ -192,14 +192,10 @@ read -s -p "Enter root password:" RPASS
 echo -e
 
 task "Setting root password" 
-$CHROOT /mnt sh -c "echo 'root:$RPASS' | chpasswd"
+$CHROOT sh -c "echo 'root:$RPASS' | chpasswd"
 result 
 
 unset RPASS
-
-task "Upgrading packages"
-$CHROOT pacman -Syu
-result
 
 task "Adding 'encrypt lvm2' to MODULES AND 'ext4' to HOOKS in '/etc/mkinitcpio.conf'" 
 sed -i 's/^MODULES=.*/MODULES="ext4"/' $MOUNTPATH/etc/mkinitcpio.conf && \
