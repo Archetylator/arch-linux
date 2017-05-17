@@ -160,7 +160,7 @@ mount $PARTITION1 $MOUNTBOOTPATH
 result
 
 task "Installing base system"
-pacstrap $MOUNTPATH base &> /dev/null
+pacstrap $MOUNTPATH base sudo &> /dev/null
 result
 
 task "Generating fstab file"
@@ -196,6 +196,25 @@ $CHROOT sh -c "echo 'root:$RPASS' | chpasswd"
 result 
 
 unset RPASS
+
+read -e -p "Enter your user name:" -i "jack" SUSER
+
+task "Creating $SUSER"
+$CHROOT useradd -m -g users -G wheel -s /bin/bash $SUSER 
+result 
+
+read -s -p "Enter your user password:" UPASS
+echo -e
+
+task "Setting standard user password" 
+$CHROOT sh -c "echo '$SUSER:$UPASS' | chpasswd"
+result 
+
+unset UPASS
+
+task "Adding user to sudoers"
+echo '$SUSER  ALL=(ALL:ALL) ALL' >> $MOUNTPATH/etc/sudoers
+result
 
 task "Time and localization"
 $CHROOT ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime && \
@@ -250,6 +269,10 @@ Description = Updating systemd-boot...
 When = PostTransaction
 Exec = /usr/bin/bootctl update
 EOF
+result
+
+task "Locking root user"
+$CHROOT passwd -l root
 result
 
 confirm "Unmount and reboot [y/N]:" && umount -R /mnt && reboot
