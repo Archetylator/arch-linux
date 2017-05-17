@@ -1,12 +1,20 @@
-# Arch Linux Installation Script
+# Arch Linux Installation Scripts
 
-It is a script used by me to speed up an installation process. 
+Works only in UEFI mode!
 
-The script installs a minimal Arch operating system with LVM on LUKS :lock: with dm-crypt.
+Features: 
+* LVM on LUKS
+* :lock: with dm-crypt
+* swap partition
+* customize:
+  * keyboard layout
+  * localization
+  * partitions size
+  * passwords
+  * hostname
 
-Works only with UEFI systems. 
+The installation script `sh -c "$(curl --location --silent https://goo.gl/ptUyx8)"`
 
-To use a script you may execute the following command:
+The post-installation script `sh -c "$(curl --location --silent https://goo.gl/PSeJNd)"`
 
-`sh -c "$(curl --location --silent https://goo.gl/ptUyx8)"`
 
