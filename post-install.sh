@@ -53,20 +53,20 @@ result
 read -e -p "Enter your user name:" -i "jack" SUSER
 
 task "Creating $SUSER"
-$CHROOT useradd -m -g users -s /bin/bash $SUSER 
+useradd -m -g users -s /bin/bash $SUSER 
 result 
 
 read -s -p "Enter your user password:" UPASS
 echo -e
 
 task "Setting standard user password" 
-echo '$SUSER:$UPASS' | chpasswd
+echo "$SUSER:$UPASS" | chpasswd
 result 
 
 unset UPASS
 
 task "Adding user to sudoers"
-echo '$SUSER  ALL=(ALL:ALL) ALL' >> /etc/sudoers
+echo "$SUSER  ALL=(ALL:ALL) ALL" >> /etc/sudoers
 result
 
 task "Locking root user"
