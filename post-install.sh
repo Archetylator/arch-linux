@@ -36,23 +36,25 @@ function confirm {
   esac
 }
 
+INSTALL="pacman -Syu --noconfirm --quiet"
+
 task "Enabling dhcpcd"
-systemctl enable dhcpcd && \ 
+systemctl enable dhcpcd &> /dev/null && \ 
 systemctl start dhcpcd &> /dev/null 
 result
 
 # If virtualbox
 task "Virtualbox"
-pacman -S virtualbox-host-modules-arch virtualbox-guest-utils
+$INSTALL virtualbox-host-modules-arch virtualbox-guest-utils
 systemctl enable vboxservice 
 systemctl start vboxservice 
 result
 
 task "Installing additional packages"
-pacman -Syu sudo base-devel xorg-server xorg-xinit gnome-shell gnome-settings-daemon && \ 
-          gnome-session gnome-control-center gnome-terminal gimp gedit eog libreoffice-still && \ 
-          adwaita-icon-theme nautilus mutter firefox gnome-calculator chromium evince keepass && \
-          virtualbox gnome-screenshot &> /dev/null 
+$INSTALL sudo base-devel xorg-server xorg-xinit gnome-shell gnome-settings-daemon \ 
+         gnome-session gnome-control-center gnome-terminal gimp gedit eog libreoffice-still \ 
+         adwaita-icon-theme nautilus mutter firefox gnome-calculator chromium evince keepass \
+         virtualbox gnome-screenshot &> /dev/null 
 result
 
 read -e -p "Enter your user name:" -i "jack" SUSER
