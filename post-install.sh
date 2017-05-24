@@ -36,6 +36,11 @@ function confirm {
   esac
 }
 
+task "Enabling dhcpcd"
+systemctl enable dhcpcd && \ 
+systemctl start dhcpcd &> /dev/null 
+result
+
 # If virtualbox
 task "Virtualbox"
 pacman -S virtualbox-host-modules-arch virtualbox-guest-utils
