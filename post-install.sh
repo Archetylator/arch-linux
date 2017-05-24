@@ -36,16 +36,19 @@ function confirm {
   esac
 }
 
+# If virtualbox
+task "Virtualbox"
+pacman -S virtualbox-host-modules-arch virtualbox-guest-utils
+systemctl enable vboxservice 
+systemctl start vboxservice 
+result
+
 task "Installing additional packages"
 pacman -Syu sudo base-devel xorg-server xorg-xinit gnome-shell gnome-settings-daemon && \ 
           gnome-session gnome-control-center gnome-terminal gimp gedit eog libreoffice-still && \ 
           adwaita-icon-theme nautilus mutter firefox gnome-calculator chromium evince keepass && \
           virtualbox gnome-screenshot &> /dev/null 
 result
-
-# If virtualbox
-# pacman -S virtualbox-host-modules-arch virtualbox-guest-utils &> /dev/null
-# systemctl enable vboxservice
 
 read -e -p "Enter your user name:" -i "jack" SUSER
 
