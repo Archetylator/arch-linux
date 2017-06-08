@@ -39,13 +39,11 @@ systemctl start vboxservice
 result
 
 task "Installing additional packages"
-$INSTALL << EOF 
-adwaita-icon-theme base-devel chromium cups cups-pdf eog evince file-roller 
-firefox gedit gimp gnome-calculator gnome-control-center gnome-screenshot 
-gnome-session gnome-settings-daemon gnome-shell gnome-terminal gtk3-print-backends 
-keepass libreoffice-still mutter nautilus sudo virtualbox vlc 
-xorg-server xorg-xinit 
-EOF
+$INSTALL adwaita-icon-theme base-devel chromium cups cups-pdf eog evince file-roller 
+$INSTALL firefox gedit gimp gnome-calculator gnome-control-center gnome-screenshot 
+$INSTALL gnome-session gnome-settings-daemon gnome-shell gnome-terminal gtk3-print-backends 
+$INSTALL keepass libreoffice-still mutter nautilus sudo virtualbox vlc 
+$INSTALL xorg-server xorg-xinit 
 result
 
 read -e -p "Enter your user name:" -i "jack" SUSER
