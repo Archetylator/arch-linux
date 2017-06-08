@@ -24,18 +24,6 @@ function result {
   fi
 }
 
-function confirm {
-  read -r -p "${1:-Are you sure? [y/N]} " response
-  case "$response" in
-    [yY][eE][sS]|[yY]) 
-        true
-        ;;
-    *)
-        false
-        ;;
-  esac
-}
-
 INSTALL="pacman -Syu --noconfirm --quiet"
 
 task "Enabling dhcpcd"
@@ -51,11 +39,13 @@ systemctl start vboxservice
 result
 
 task "Installing additional packages"
-$INSTALL adwaita-icon-theme base-devel chromium cups cups-pdf eog evince file-roller \ 
-firefox gedit gimp gnome-calculator gnome-control-center gnome-screenshot \
-gnome-session gnome-settings-daemon gnome-shell gnome-terminal gtk3-print-backends \ 
-keepass libreoffice-still mutter nautilus sudo virtualbox vlc \ 
-xorg-server xorg-xinit &> /dev/null
+$INSTALL << EOF 
+adwaita-icon-theme base-devel chromium cups cups-pdf eog evince file-roller 
+firefox gedit gimp gnome-calculator gnome-control-center gnome-screenshot 
+gnome-session gnome-settings-daemon gnome-shell gnome-terminal gtk3-print-backends 
+keepass libreoffice-still mutter nautilus sudo virtualbox vlc 
+xorg-server xorg-xinit 
+EOF
 result
 
 read -e -p "Enter your user name:" -i "jack" SUSER
