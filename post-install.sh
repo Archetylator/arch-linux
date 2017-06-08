@@ -32,17 +32,15 @@ systemctl start dhcpcd &> /dev/null
 result
 
 # If virtualbox
-task "Virtualbox"
 pacman -Syu virtualbox-host-modules-arch virtualbox-guest-utils
 systemctl enable vboxservice 
 systemctl start vboxservice 
-result
 
 task "Installing additional packages"
 $INSTALL adwaita-icon-theme base-devel chromium cups cups-pdf eog evince file-roller &> /dev/null && \
 $INSTALL firefox gedit gimp gnome-calculator gnome-control-center gnome-screenshot &> /dev/null && \
 $INSTALL gnome-session gnome-settings-daemon gnome-shell gnome-terminal gtk3-print-backends &> /dev/null && \
-$INSTALL keepass libreoffice-still mutter nautilus sudo virtualbox vlc &> /dev/null && \
+$INSTALL keepass libreoffice-still mutter nautilus qt4 sudo vim virtualbox vlc &> /dev/null && \
 $INSTALL xorg-server xorg-xinit xterm &> /dev/null
 result
 
@@ -51,6 +49,12 @@ read -e -p "Enter your user name:" -i "jack" SUSER
 task "Creating $SUSER"
 useradd -m -g users -s /bin/bash $SUSER 
 result 
+
+task "Creating .xinitrc"
+cat << EOF > /home/$SUSER/.xinitrc
+exec gnome-session
+EOF
+result
 
 read -s -p "Enter your user password:" UPASS
 echo -e
