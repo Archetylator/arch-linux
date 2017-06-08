@@ -52,10 +52,10 @@ result
 
 task "Installing additional packages"
 $INSTALL adwaita-icon-theme base-devel chromium cups cups-pdf eog evince file-roller \ 
-         firefox gedit gimp gnome-calculator gnome-control-center gnome-screenshot \
-         gnome-session gnome-settings-daemon gnome-shell gnome-terminal gtk3-print-backends \ 
-         keepass libreoffice-still mutter nautilus sudo virtualbox vlc \ 
-         xorg-server xorg-xinit &> /dev/null 
+firefox gedit gimp gnome-calculator gnome-control-center gnome-screenshot \
+gnome-session gnome-settings-daemon gnome-shell gnome-terminal gtk3-print-backends \ 
+keepass libreoffice-still mutter nautilus sudo virtualbox vlc \ 
+xorg-server xorg-xinit &> /dev/null
 result
 
 read -e -p "Enter your user name:" -i "jack" SUSER
