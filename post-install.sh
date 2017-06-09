@@ -47,7 +47,7 @@ result
 read -e -p "Enter your user name:" -i "jack" SUSER
 
 task "Creating $SUSER"
-useradd -m -g users -s /bin/bash $SUSER 
+useradd -m -s /bin/bash $SUSER 
 result 
 
 task "Creating .xinitrc"
