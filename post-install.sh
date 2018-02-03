@@ -69,6 +69,16 @@ task "Adding user to sudoers"
 echo "$SUSER  ALL=(ALL:ALL) ALL" >> /etc/sudoers
 result
 
+task "Configuring firewall"
+iptables -P INPUT DROP && \
+iptables -P FORWARD DROP && \
+iptables -P OUTPUT ACCEPT && \
+iptables -A INPUT -i lo -j ACCEPT && \
+iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT && \
+iptables-save > /etc/iptables/iptables.rules && \
+systemctl enable iptables
+result
+
 task "Locking root user"
 passwd -l root &> /dev/null
 result
